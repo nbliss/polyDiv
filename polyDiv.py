@@ -1,18 +1,26 @@
-from sympy import *
-x = symbols('x')
-y = symbols('y')
-L = [y*y-1,x*y+1]
-p = x*y*y-x
+def polyDiv(p,L):
+"""
+Accepts a polynomial p and a list of polynomials L.
+Returns the remainder after division of p by L.
+Input should by sympy polynomials.:
+"""
+	from sympy import symbols,Poly,LT,div
+	r = p
+	k = 0
+	while(r!=0 and k!= -1):
+	    k = -1
+	    for i in range(len(L)):
+		if div(Poly(LT(r)),LT(Poly(L[i])))[1] == 0:
+		    k = i
+		    break
+	    if k!=-1:
+		r = (r - div(Poly(LT(r)),Poly(LT(L[i])))[0]*L[k]).expand()
+	return r
 
-
-r = p
-k = 0
-while(r!=0 and k!= -1):
-    k = -1
-    for i in range(len(L)):
-        if div(LT(r),LT(L[i]))[1] == 0:
-            k = i
-            break
-    if k!=-1:
-        r = (r - div(LT(r),LT(L[i]))[0]*L[k]).expand()
-print r
+if __name__=="__main__":
+	from sympy import symbols,Poly
+	x = symbols('x')
+	y = symbols('y')
+	L = [Poly(y*y-1),Poly(x*y+1)]
+	p = Poly(x*y*y-x)
+	print polyDiv(p,L)
