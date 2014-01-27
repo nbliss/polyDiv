@@ -1,2 +1,2 @@
 The readme for this repository.
-We're dividin' polynomials, yo.
+We're dividing polynomials, yo.
