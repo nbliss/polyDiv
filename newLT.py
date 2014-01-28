@@ -8,7 +8,7 @@ class monomialOrdering(object):
 	I've added support for lex, grlex, and grevlex for convenience, but
 	the primary purpose of this class is for doing weighted ordering.
 	"""
-	from sympy import Poly
+	from sympy import Poly,S
 	def __init__(self,variables,ordering='lex',weightVector=(1,1,1)):
 		"""
 		Checks that the ordering is one of the ones we can deal with.
@@ -17,17 +17,27 @@ class monomialOrdering(object):
 		variables in its initialization)
 		"""
 		assert (ordering in ['lex','grlex','grevlex','weighted'])
+		self.variables = variables
 		self.ordering = ordering
 		self.nv = len(variables)
 		self.wv = weightVector
 
-	def LT(poly):
+	def LT(self,poly):
 		polyDict = poly.as_dict()
 		exponents = polyDict.keys()
 		largest = exponents[0]
 		for i in xrange(len(polyDict)):
-			if compare(exponents[i],largest): largest = exponents[i]
+			if self.compare(exponents[i],largest): largest = exponents[i]
 		return Poly({largest:polyDict[largest]},self.variables)
+		
+	def LM(self,poly):
+		from sympy import S
+		polyDict = poly.as_dict()
+		exponents = polyDict.keys()
+		largest = exponents[0]
+		for i in xrange(len(polyDict)):
+			if self.compare(exponents[i],largest): largest = exponents[i]
+		return Poly({largest:S(1)},self.variables)
 
 	def compare(self,monA,monB,lex=False):
 		"""
@@ -66,8 +76,14 @@ class monomialOrdering(object):
 			dotB = sum(monB[i]*self.wv[i] for i in xrange(self.nv)) 
 			if dotA>dotB: return True
 			elif dotA<dotB: return False
-			else: return self.compar(monA,monB,lex=True)
+			else: return self.compare(monA,monB,lex=True)
 
 if __name__=="__main__":
-	mono = monomialOrdering(3,ordering='weighted',weightVector=(1,3,4))
-	print mono.compare((4,2,4),(3,3,3)) 
+	from sympy import symbols,Poly
+	x,y,z = symbols('x,y,z')
+	symbolList = [x,y,z]
+	mono = monomialOrdering(symbolList,ordering='weighted',weightVector=(1,3,4))
+	p = Poly(3*x*y**2-2*x*z+1)
+	print p
+	print mono.LM(p)
+	print mono.LT(p)

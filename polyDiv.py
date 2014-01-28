@@ -1,10 +1,13 @@
 def polyDiv(p,L):
-"""
-Accepts a polynomial p and a list of polynomials L.
-Returns the remainder after division of p by L.
-Input should by sympy polynomials.:
-"""
+	"""
+	Accepts a polynomial p and a list of polynomials L.
+	Returns the remainder after division of p by L.
+	Input should by sympy polynomials.:
+	"""
 	from sympy import symbols,Poly,LT,div
+	print type(LT(p))
+	print type(p)
+	print p
 	r = p
 	k = 0
 	while(r!=0 and k!= -1):
@@ -23,4 +26,5 @@ if __name__=="__main__":
 	y = symbols('y')
 	L = [Poly(y*y-1),Poly(x*y+1)]
 	p = Poly(x*y*y-x)
+	print type(p)
 	print polyDiv(p,L)
