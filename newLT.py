@@ -85,8 +85,7 @@ if __name__=="__main__":
 	from sympy import symbols,Poly
 	x,y,z = symbols('x,y,z')
 	symbolList = [x,y,z]
-	mono = monomialOrdering(symbolList,ordering='weighted',weightVector=(1,3,4))
+	mono = monomialOrdering(symbolList,ordering='lex')
 	p = Poly(3*x*y**2-2*x*z+1)
 	print p
-	print mono.LM(p)
 	print mono.LT(p)
