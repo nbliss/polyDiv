@@ -23,6 +23,7 @@ class monomialOrdering(object):
 		self.wv = weightVector
 
 	def LT(self,poly):
+		from sympy import Poly
 		polyDict = poly.as_dict()
 		exponents = polyDict.keys()
 		largest = exponents[0]
@@ -31,7 +32,7 @@ class monomialOrdering(object):
 		return Poly({largest:polyDict[largest]},self.variables)
 		
 	def LM(self,poly):
-		from sympy import S
+		from sympy import S,Poly
 		polyDict = poly.as_dict()
 		exponents = polyDict.keys()
 		largest = exponents[0]
