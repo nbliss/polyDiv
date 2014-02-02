@@ -1,5 +1,6 @@
 from sympy import *
 from newLT import *
+import sympy
 x = symbols('x')
 y = symbols('y')
 z = symbols('z')
@@ -46,8 +47,9 @@ def groebasis(f,s):
 	#The lines below are intended to get the groebner basis monic
 	for k in g:
 		#The line below should give the leading coefficient of a polynomial. Currently, it just returns None. I think this means you need to add a new coeff function?
-		if(k.coeff(mono.LM(k)) != 1):
-			g[g.index(k)] = k/(k.coeff(mono.LM(k)))
+		leadingCoeff = mono.LM(k).as_dict().values()[0] 
+		if(leadingCoeff != 1):
+			k = k/leadingCoeff
 	print g
 
 
