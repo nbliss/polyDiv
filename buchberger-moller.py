@@ -15,10 +15,14 @@ def buchMol(points,ordering,weightVector=(1,1,1)):
 	dim = len(points[0])
 	for pt in points:   # check that all pts have same dimension
 		assert len(pt)==dim
-	varstring = 'x0'
-	for i in xrange(1,dim):
-		varstring+=',x'+str(i)
-	varlist = symbols(varstring)
+	if dim in [1,2,3]:
+		l = ['x','x,y','x,y,z']
+		varlist = symbols(l[dim-1])
+	else:
+		varstring = 'x0'
+		for i in xrange(1,dim):
+			varstring+=',x'+str(i)
+		varlist = symbols(varstring)
 	monClass = monomialOrdering(varlist,ordering,weightVector)
 	counter = 0 # keep track of number of rows of matrix & size of S
 	G,normalSet,S = [],[],[]
@@ -26,17 +30,23 @@ def buchMol(points,ordering,weightVector=(1,1,1)):
 	M = Matrix(0,len(points),[])
 	pivots = {} # {column:row}
 	while L!= []:
+		# step 2:
 		t = L[0]
 		for elmt in L:
 			if monClass.compare(t.as_dict().keys()[0],elmt.as_dict().keys()[0]):
 				t = elmt
+		L.remove(t)
 		evalVector = Matrix(1,len(points),[t.eval(pt) for pt in points])
+		print "hi"
+		print M
+		print evalVector
 		v,a = vecReduce(evalVector,M,pivots)
+		print v
 		viszero = False
 		if firstNonzero(v)==-1: viszero = True
 		toAdd = t
 		for i in xrange(counter):
-			toAdd -= a[i]*S[i]
+			toAdd +=Poly(-1,varlist)*Poly(a[i],varlist)*S[i] 
 		if viszero:
 			G.append(toAdd)
 			for mon in L:
@@ -49,8 +59,8 @@ def buchMol(points,ordering,weightVector=(1,1,1)):
 			S.append(toAdd)
 			counter+=1
 			normalSet.append(t)
-			for x in varlist:
-				toCheck = Poly(x)*t
+			for variable in varlist:
+				toCheck = Poly(variable,varlist)*t
 				isMultiple = False
 				for elmt in L:
 					if div(elmt,toCheck)[1]==0:
@@ -72,13 +82,14 @@ def vecReduce(vec,mat,pivots):
 	and returns the vector and the ai's
 	Note: pivots is {column:row}
 	"""
+	from sympy import Rational
 	a = {}
 	if mat.shape[0]==0: return vec,a.values()
 	toCheck = firstNonzero(vec)
 	if toCheck == -1: return vec,a.values()
 	while True:
 		if toCheck in pivots:
-			a_value = vec[toCheck]/mat[toCheck,pivots[toCheck]]
+			a_value = Rational(vec[toCheck])/Rational(mat[toCheck,pivots[toCheck]])
 			vec -= a_value*mat[pivots[toCheck],:]
 			a[pivots[toCheck]]=a_value
 		else: break
@@ -105,7 +116,13 @@ def firstNonzero(vec):
 
 if __name__=="__main__":
 	from sympy import S
-	print buchMol([[0,0],[0,-1],[1,0],[1,1],[-1,1]],ordering='grlex')	
+	basis,normalSet = buchMol([[0,0],[0,-1],[1,0],[1,1],[-1,1]],ordering='grlex')	
+	print "Basis:"
+	for b in basis:
+		print b.as_expr()
+	print "Normal set:"
+	for b in normalSet:
+		print b.as_expr()
 	"""
 	Test to make sure vecReduce works.
 	from sympy import Matrix,S
