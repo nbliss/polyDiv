@@ -24,6 +24,7 @@ class monomialOrdering(object):
 
 	def LT(self,poly):
 		from sympy import Poly
+		if poly==0:return poly
 		poly = Poly(poly,self.variables)
 		polyDict = poly.as_dict()
 		exponents = polyDict.keys()
@@ -34,6 +35,7 @@ class monomialOrdering(object):
 		
 	def LM(self,poly):
 		from sympy import S,Poly
+		if poly==0:return poly
 		poly = Poly(poly,self.variables)
 		polyDict = poly.as_dict()
 		exponents = polyDict.keys()
