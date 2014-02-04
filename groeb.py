@@ -6,7 +6,7 @@ y = symbols('y')
 z = symbols('z')
 f = [Poly(x**2+1),Poly(x*y-1)]
 s = [x,y]
-f = [Poly(3*x**2+1,s),Poly(x*y-1,s)]
+f = [Poly(x**2+1,s,domain='QQ'),Poly(x*y-1,s,domain='QQ')]
 
 def groebasis(f,s):
 	from newLT import *
@@ -20,9 +20,9 @@ def groebasis(f,s):
 				AA = lcm(mono.LM(S[0]),mono.LM(S[1]))/mono.LT(S[0])
 				BB = lcm(mono.LM(S[0]),mono.LM(S[1]))/mono.LT(S[1])
 				if type(AA) != Poly:
-					AA = Poly(AA,s)
+					AA = Poly(AA,s,domain='QQ')
 				if type(BB) != Poly:
-					BB = Poly(BB,s)
+					BB = Poly(BB,s,domain='QQ')
 				Spoly = AA*S[0] - BB*S[1]
 				r = Spoly
 				k = 0
@@ -43,58 +43,43 @@ def groebasis(f,s):
 	#http://www.kent.ac.uk/smsas/personal/gdb/MA574/week6.pdf
 	#The above algorithm is implemented below. First, getting a minimal groebner basis:
 
-
-	#The lines below are intended to get the groebner basis monic
+	monicg = []
 	for k in g:
-		#The line below should give the leading coefficient of a polynomial. Currently, it just returns None. I think this means you need to add a new coeff function?
-		leadingCoeff = mono.LM(k).as_dict().values()[0] 
-		if(leadingCoeff != 1):
-			k = k/leadingCoeff
-	print g
+		leadingCoeff = mono.LT(k).as_dict().values()[0]
+		monicg.append(Poly(k/leadingCoeff,s,domain='QQ'))
 
-
-
-	#Once monic, proceed with minimal
 
 	H2 = [] #Using notation of kent algorithm
 	minimalg = []
-	for k in g:
+	for k in monicg:
 		if mono.LT(k) not in H2:
 			H2.append(mono.LT(k))
 			minimalg.append(k)
+	print "Minimal Groebner basis below:"
+	print minimalg
 
-	#The above shoud should create the final minimal groebnerbasis 
-	
-	#I guess I'm mentally struggling to implement the reduction part of the algorithm. Again, I don't think it's bad, I'm probably just being dumb. I think we should be easily able to throw that part together tomorrow afternoon.
+	holdd = len(minimalg)
+	for ka in range(holdd):
+		r = minimalg.pop(0)
+		k = 0
+	 	while(r!=0 and k!= -1):
+	        	k = -1
+	        	for i in range(len(minimalg)):
+	         		if div(mono.LT(r),mono.LT(minimalg[i]))[1] == 0:
+	               			k = i
+	                		break
+	        	if k!=-1:
+	        		r = (r - div(mono.LT(r),mono.LT(minimalg[i]))[0]*minimalg[k]).expand()
+		if r != 0:
+			minimalg.append(r)
+
+	print "Reduced Groebner basis below:"
+	print minimalg
 
 
 	return
 
 
-#So the above is a direct implementation of the algorithm. It works. Below, I've tried to add a way to get the reduced groebner basis. It might work..? It works sometimes, that's for sure.
+
 if __name__=="__main__":
 	groebasis(f,s)
-"""
-for p in g:
-    testg = list(g)
-    del testg[testg.index(p)]
-    r = p
-    k = 0
-    while(r!=0 and k!= -1):
-        k = -1
-        for i in range(len(testg)):
-            if div(LT(r),LT(testg[i]))[1] == 0:
-                k = i
-                break
-        if k!=-1:
-            r = (r - div(LT(r),LT(testg[i]))[0]*testg[k]).expand()
-    if(r == 0):
-        g = list(testg)
-
-for k in g:
-    if(k.coeff(LM(k)) != 1):
-        g[g.index(k)] = k/(k.coeff(LM(k)))
-
-print "Reduced Groebner basis might be below:"
-print g
-"""

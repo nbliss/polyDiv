@@ -24,7 +24,7 @@ if __name__=="__main__":
 	from sympy import symbols,Poly
 	x = symbols('x')
 	y = symbols('y')
-	L = [Poly(y*y-1),Poly(x*y+1)]
-	p = Poly(x*y*y-x)
+	L =  [Poly(3*x + y), Poly(y**2 + 3)]
+	p = Poly(x*y-1)
 	print type(p)
 	print polyDiv(p,L)
