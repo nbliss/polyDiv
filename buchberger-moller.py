@@ -116,6 +116,8 @@ def firstNonzero(vec):
 
 if __name__=="__main__":
 	from sympy import S
+#	points = [[0,0],[0,-1],[1,-2],[1,1],[-1,2]]
+	points =[[0,0],[0,-1],[1,0],[1,1],[-1,1]] 	
 	basis,normalSet = buchMol([[0,0],[0,-1],[1,0],[1,1],[-1,1]],ordering='grlex')	
 	print "Basis:"
 	for b in basis:
@@ -123,14 +125,3 @@ if __name__=="__main__":
 	print "Normal set:"
 	for b in normalSet:
 		print b.as_expr()
-	"""
-	Test to make sure vecReduce works.
-	from sympy import Matrix,S
-	mat = Matrix([[1,1,1,1],[0,2,1,1],[0,0,4,1]],domain='QQ')
-	vec = Matrix(1,4,[1,2,1,1],domain='QQ')
-	pivots = {0:0,1:1,2:2}
-	print mat
-	print vec
-	print pivots
-	print vecReduce(vec,mat,pivots)
-	"""
