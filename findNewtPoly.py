@@ -1,3 +1,8 @@
+"""
+For the polynomial p, finds the leading monomial for a
+bunch of different weight vectors to check that they are
+the Newton polygon vertices (they are, at least for this polygon)
+"""
 import newLT
 from sympy import symbols,Poly
 x,y = symbols('x,y')
